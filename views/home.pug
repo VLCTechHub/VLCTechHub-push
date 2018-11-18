@@ -9,16 +9,18 @@ block content
       table.table
         thead
           tr
-            th.col Email
-            th.col Name
+            th.col Type
+            th.col Token
             th.col Actions
         tbody
           - for (user of users) {
             tr
               td.email 
-                = user.email
+                = user.type
               td.name
-                = user.name
+                = user.token
+              td.last
+                = user.lastItemId
               td.action
                 a.btn.btn-default(href='#', class='js-send-notification', role='button') Send notification
           - }

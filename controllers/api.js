@@ -1,58 +1,77 @@
-const User = require('../models/User');
-const Expo = require('expo-server-sdk');
+const User = require("../models/User");
+const remoteApi = require("../services/remoteApi");
 
-// Create a new Expo SDK client
-const expo = new Expo();
-
-/**
- * POST /user
- * Store a user's details
- */
-exports.postUser = (req, res) => {
+const validateInput = (req, res) => {
   const response = {
-    status: 'failure',
-    message: 'you didn\'t pass valid parameters'
+    status: "failure",
+    message: "you didn't pass valid parameters"
   };
 
-  const { email, name, token } = req.body;
-  if (!email || !name || !token) {
+  const { type } = req.params;
+
+  if (!["events", "jobs"].includes(type)) {
+    response.message = "you have to use /events or /jobs in the params";
     return res.json(response);
   }
 
-  const user = new User({ email, name, token });
+  const { token } = req.body;
+  if (!token) {
+    return res.json(response);
+  }
 
-  user.save((err) => {
-    if (err) {
-      response.message = 'couldn\'t save user, duplicate entry?';
+  return { response, type, token };
+};
+
+exports.removeUser = (req, res) => {
+  const { response, type, token } = validateInput(req, res);
+  User.getUserByTypeAndToken(type, token).then(user => {
+    if (!user) {
+      response.message = "user doesn't exist";
       return res.json(response);
     }
-
-    response.status = 'success';
-    response.message = 'user successfully saved';
-
-    res.json(response);
-  });
-};
-
-/**
- * POST /notificaion
- * Send a push notification to a user
- */
-exports.postNotification = (req, res) => {
-  User.findOne({ email: req.params.email }, async (err, user) => {
-    if (!Expo.isExpoPushToken(user.token)) {
-      return console.error(`Push token ${user.token} is not a valid Expo push token`);
+    if (user) {
+      User.removeUserByTypeAndToken(type, token).then(response => {
+        if (response.result.ok) {
+          response.status = "success";
+          response.message = "user successfully removed";
+          res.json(response);
+        }
+      });
     }
-
-    const message = {
-      to: user.token,
-      sound: 'default',
-      title: req.body.title,
-      body: req.body.message,
-    };
-
-    const receipt = await expo.sendPushNotificationAsync(message);
-    res.json({ message: receipt });
   });
 };
 
+exports.updateUser = (req, res) => {
+  const { response, type, token } = validateInput(req, res);
+  remoteApi.getLatestItemForType(type).then(latestItem => {
+    User.setLatestItemIdForUser([token], type, "pod").then(response => {
+      if (response.ok) {
+        response.status = "success";
+        response.message = "user successfully updated";
+        res.json(response);
+      }
+    });
+  });
+};
+
+exports.postUser = (req, res) => {
+  const { response, type, token } = validateInput(req, res);
+  User.getUserByTypeAndToken(type, token).then(user => {
+    if (user) {
+      response.message = "user exists";
+      return res.json(response);
+    }
+    remoteApi.getLatestItemForType(type).then(latestItem => {
+      const user = new User({ type, token, latestItemId: latestItem.id });
+      user.save(err => {
+        if (err) {
+          response.message = "couldn't save user, duplicate entry?";
+          return res.json(response);
+        }
+        response.status = "success";
+        response.message = "user successfully saved";
+        res.json(response);
+      });
+    });
+  });
+};
