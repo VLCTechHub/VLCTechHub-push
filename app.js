@@ -35,8 +35,10 @@ const app = express();
  * Connect to MongoDB.
  */
 mongoose.Promise = global.Promise;
+const DB_NAME = "vlctechhub";
 mongoose.connect(
-  "mongodb://localhost:27017/vlctechhub" || process.env.MONGODB_URI
+  (process.env.MONGODB_URI && process.env.MONGODB_URI + DB_NAME) ||
+    "mongodb://localhost:27017/" + DB_NAME
 );
 mongoose.connection.on("error", err => {
   console.error(err);
