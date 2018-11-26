@@ -10,7 +10,8 @@ const notificationTitles = {
 // Create a new Expo SDK client
 const expo = new Expo();
 
-const sendNotifications = (tokens, body) => {
+const sendNotifications = (tokens, { title, message }) => {
+  console.log(tokens, title, message);
   let messages = [];
   for (let token of tokens) {
     if (!Expo.isExpoPushToken(token)) {
@@ -20,8 +21,8 @@ const sendNotifications = (tokens, body) => {
     messages.push({
       to: token,
       sound: "default",
-      title: body.title,
-      body: body.message
+      title: title,
+      body: message
     });
   }
 
@@ -41,13 +42,13 @@ const sendNotifications = (tokens, body) => {
 
 const sendPushNotificationsForType = type => {
   remoteApi.getLatestItemForType(type).then(latestItem => {
-    User.getUsersToNotify(type, latestItem.id).then(users => {
+    User.getUsersByType(type, latestItem.id).then(users => {
       const tokens = users.map(user => user.token);
       sendNotifications(tokens, {
-        title: notificationTitle[type],
+        title: notificationTitles[type],
         message: latestItem.title
       });
-      User.setLatestItemIdForUser(tokens, type, latestEvent.id);
+      User.setLatestItemIdForUser(tokens, type, latestItem.id).then(res => res);
     });
   });
 };
