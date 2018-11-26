@@ -1,37 +1,41 @@
 /* eslint-disable */
 
-var recipientEmail = '';
+var token = "";
+var type = "";
 
-$(document).ready(function () {
+$(document).ready(function() {
+  $(".js-send-notification").on("click", function() {
+    var $row = $(this).closest("tr");
+    token = $row
+      .find("td.token")
+      .text()
+      .trim();
+    type = $row
+      .find("td.type")
+      .text()
+      .trim();
 
-  $('.js-send-notification').on('click', function() {
+    console.log("set token to " + token);
+    console.log("set type to" + type);
 
-    var $row = $(this).closest('tr');
-    var name = $row.find('td.name').text().trim();
-    var email = $row.find('td.email').text().trim();
-    recipientEmail = email;
-
-    $('.modal').modal('show');
-    $('.modal .modal-title span').text(name);
-
+    $(".modal").modal("show");
+    $(".modal .modal-title span").text(token);
   });
 
-  $('.js-send-notification-submit').on('click', function() {
-    var reqUri = window.API_URI + '/notification/' + recipientEmail;
+  $(".js-send-notification-submit").on("click", function() {
+    var reqUri = window.API_URI + "/notification/" + type;
     $.ajax({
       type: "POST",
       url: reqUri,
       data: {
-        title: $('#title').val(),
-        message: $('#message').val()
+        token: token
       },
       success: function() {
-        console.log('success');
+        console.log("success");
       },
-      dataType: 'json'
+      dataType: "json"
     });
-    
-    $('.modal').modal('hide');
-  });
 
+    $(".modal").modal("hide");
+  });
 });
