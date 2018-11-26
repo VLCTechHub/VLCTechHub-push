@@ -29,7 +29,7 @@ const user4 = {
 describe("User Model", () => {
   const UserMock = sinon.mock(User);
   it("should return a user by type and token", done => {
-    UserMock.expects("find")
+    UserMock.expects("findOne")
       .withArgs({ type: "events", token: "123" })
       .chain("exec")
       .resolves(user1);
@@ -53,7 +53,7 @@ describe("User Model", () => {
     UserMock.expects("update")
       .withArgs(
         { token: { $in: [789, 012] }, type: "jobs" },
-        { $set: { lastItemId: "mno" } }
+        { $set: { latestItemId: "mno" } }
       )
       .chain("exec")
       .resolves({ status: "ok" });
