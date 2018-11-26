@@ -12,7 +12,11 @@ dotenv.load({ path: ".env" });
  */
 mongoose.Promise = global.Promise;
 mongoose.connect(
-  "mongodb://localhost:27017/vlctechhub" || process.env.MONGOLAB_URI
+  process.env.MONGODB_URI || "mongodb://localhost:27017/vlctechhub",
+  {
+    user: process.env.MONGODB_USER,
+    pass: process.env.MONGODB_PASS
+  }
 );
 mongoose.connection.on("error", err => {
   console.error(err);
