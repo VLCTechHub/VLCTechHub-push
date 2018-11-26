@@ -87,7 +87,6 @@ app.get("/", homeController.index);
 app.post("/user/:type", apiController.postUser);
 app.put("/user/:type", apiController.updateUser);
 app.delete("/user/:type", apiController.removeUser);
-// app.post("/api/notification/:type", apiController.postNotification);
 
 /**
  * Error Handler.
