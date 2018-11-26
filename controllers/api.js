@@ -44,8 +44,8 @@ exports.removeUser = (req, res) => {
 exports.updateUser = (req, res) => {
   const { response, type, token } = validateInput(req, res);
   remoteApi.getLatestItemForType(type).then(latestItem => {
-    User.setLatestItemIdForUser([token], type, "pod").then(response => {
-      if (response.ok) {
+    User.setLatestItemIdForUser([token], type, latestItem.id).then(status => {
+      if (status.ok) {
         response.status = "success";
         response.message = "user successfully updated";
         res.json(response);
@@ -62,8 +62,8 @@ exports.postUser = (req, res) => {
       return res.json(response);
     }
     remoteApi.getLatestItemForType(type).then(latestItem => {
-      const user = new User({ type, token, latestItemId: latestItem.id });
-      user.save(err => {
+      const newUser = new User({ type, token, latestItemId: latestItem.id });
+      newUser.save(err => {
         if (err) {
           response.message = "couldn't save user, duplicate entry?";
           return res.json(response);
