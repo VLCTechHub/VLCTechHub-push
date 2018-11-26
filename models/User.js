@@ -22,9 +22,12 @@ userSchema.static("getUsersByType", function(type, lastItemId) {
 });
 
 userSchema.static("setLatestItemIdForUser", function(tokens, type, itemId) {
-  console.log("set lateste item id to: ", itemId);
   const criteria = { token: { $in: tokens }, type: type };
-  return this.update(criteria, { $set: { latestItemId: itemId } });
+  return this.update(
+    criteria,
+    { $set: { latestItemId: itemId } },
+    { multi: true }
+  );
 });
 
 const User = mongoose.model("User", userSchema);
