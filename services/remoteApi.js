@@ -23,15 +23,26 @@ const fetchData = function(uri) {
   });
 };
 
-const getLatestItem = items => {
-  items.sort((a, b) => new Date(a.date) < new Date(b.date));
+const getLatestItem = (field, items) => {
+  items.sort((a, b) => {
+    const dateA = new Date(a[field]);
+    const dateB = new Date(b[field]);
+    if (dateA < dateB) return 1;
+    if (dateA > dateB) return -1;
+    return 0;
+  });
   return items[0];
 };
 
 const getLatestItemForType = (type, fetch = fetchData) => {
   return new Promise((res, rej) => {
     fetch(remoteApiCalls[type].uri).then(json =>
-      res(getLatestItem(json[remoteApiCalls[type].responseObject]))
+      res(
+        getLatestItem(
+          type === "jobs" ? "published_at" : "date",
+          json[remoteApiCalls[type].responseObject]
+        )
+      )
     );
   });
 };
