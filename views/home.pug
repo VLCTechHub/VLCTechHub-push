@@ -11,7 +11,7 @@ block content
           tr
             th.col Type
             th.col Token
-            th.col Actions
+            th.col Latest item ID
         tbody
           - for (user of users) {
             tr
@@ -20,9 +20,7 @@ block content
               td.name
                 = user.token
               td.last
-                = user.lastItemId
-              td.action
-                a.btn.btn-default(href='#', class='js-send-notification', role='button') Send notification
+                = user.latestItemId
           - }
 
   include partials/modal
