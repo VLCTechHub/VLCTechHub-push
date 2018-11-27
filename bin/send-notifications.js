@@ -1,6 +1,8 @@
+#!/usr/bin/env node
+
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const notificationsController = require("./controllers/notifications");
+const notificationsController = require("../controllers/notifications");
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
