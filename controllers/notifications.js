@@ -46,7 +46,10 @@ const sendPushNotificationsForType = type => {
       const tokens = users.map(user => user.token);
       sendNotifications(tokens, {
         title: notificationTitles[type],
-        message: latestItem.title
+        message:
+          type === "events"
+            ? latestItem.title
+            : `${latestItem.title} en ${latestItem.company.name}`
       });
       User.setLatestItemIdForUser(tokens, type, latestItem.id).then(res => res);
     });
