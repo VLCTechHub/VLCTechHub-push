@@ -8,22 +8,22 @@ require("../models/User");
 const user1 = {
   token: "123",
   type: "events",
-  lastItemId: "abc"
+  latestItemId: "abc"
 };
 const user2 = {
   token: "456",
   type: "events",
-  lastItemId: "def"
+  latestItemId: "def"
 };
 const user3 = {
   token: "789",
   type: "jobs",
-  lastItemId: "ghi"
+  latestItemId: "ghi"
 };
 const user4 = {
   token: "012",
   type: "jobs",
-  lastItemId: "jkl"
+  latestItemId: "jkl"
 };
 
 describe("User Model", () => {
@@ -40,12 +40,12 @@ describe("User Model", () => {
   });
   it("should return the users of type that don't match latest item id", done => {
     UserMock.expects("find")
-      .withArgs({ type: "events", lastItemId: { $ne: "def" } })
+      .withArgs({ type: "events", latestItemId: { $ne: "def" } })
       .chain("exec")
-      .resolves([user2]);
+      .resolves([user1]);
     User.getUsersByType("events", "def").then(res => {
       expect(res.length).to.eq(1);
-      expect(res[0].lastItemId).to.eq("def");
+      expect(res[0].latestItemId).to.eq("abc");
       done();
     });
   });

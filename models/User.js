@@ -17,8 +17,8 @@ userSchema.static("removeUserByTypeAndToken", function(type, token) {
   return this.remove({ type, token });
 });
 
-userSchema.static("getUsersByType", function(type, lastItemId) {
-  return this.find({ type, lastItemId: { $ne: lastItemId } });
+userSchema.static("getUsersByType", function(type, latestItemId) {
+  return this.find({ type, latestItemId: { $ne: latestItemId } });
 });
 
 userSchema.static("setLatestItemIdForUser", function(tokens, type, itemId) {
