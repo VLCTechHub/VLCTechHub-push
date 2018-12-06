@@ -1,6 +1,6 @@
 # Expo push notificaton server
 
-A simple node.js server to store user credentials in a MongoDB database and send notifications to them via a basic web interface.
+A simple node.js server to store user credentials in a MongoDB database and send notifications to them via a Heroku scheduler command (`/bin`).
 
 It is the server-side implementation of [Expo push notifications](https://docs.expo.io/versions/latest/guides/push-notifications.html) in node.js for which Expo themselves provide an identical tool [here](https://expo.io/dashboard/notifications), without the user saving part.
 
@@ -12,31 +12,40 @@ You'll need a running MongoDB instance for this to work. Otherwise, node won't k
 
 ## Setup
 
-This should be as easy as:
-
 ```
 npm install
 ```
 
-You may want to install [nodemon](https://github.com/remy/nodemon) for not having to constantly restart your server.
-
 ## Usage
 
-`node app.js` or `nodemon app.js`
+```
+npm start
+```
 
-### Saving a new user
+## Tests
 
-Send a POST request to `/user` with the following parameters:
+```
+npm test
+```
 
-- name: name of the user
-- token: the exponent token that'll be used to send a push notification to a user
-- email: email of the user (used as the unique identification key when triggering a push notification)
+### API calls
 
-### Sending a push notification
+#### Save a new user:
 
-Either go to the dashboard at `/` and click on "Send notification" or...
+POST `/user/:type`
 
-Send a POST request to `/api/notification/:email`, where `:email` is the email of the user you want to notify, with the following parameters:
+#### Update a user's latest item ID:
 
-- title
-- message
+PUT `/user/:type`
+
+#### Delete a user:
+
+DELETE `/user/:type`
+
+- `:type` can be `events` or `jobs`
+- Calls are `x-www-form-urlencoded` and contain one parameter:
+  - `token`: Expo-generated push notification token
+
+### Sending push notifications to users
+
+The command `node bin/send-notifications.js` is executed every full hour on Heroku using a scheduler

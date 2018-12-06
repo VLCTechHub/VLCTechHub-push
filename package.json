@@ -1,10 +1,10 @@
 {
-  "name": "expo-push-notifications-server",
+  "name": "VLCTechHub-app-push-notifications-server",
   "version": "0.0.1",
   "description": "A simple node server that exposes a basic API to save user tokens and lets you send notifications to them",
   "repository": {
     "type": "git",
-    "url": "https://github.com/marcelkalveram/expo-push-notifications-server"
+    "url": "https://github.com/marcelkalveram/VLCTechHub-app-push-notifications-server"
   },
   "author": "Marcel Kalveram",
   "license": "MIT",
