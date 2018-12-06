@@ -23,7 +23,6 @@ dotenv.load({ path: ".env" });
 /**
  * Controllers (route handlers).
  */
-const homeController = require("./controllers/home");
 const apiController = require("./controllers/api");
 
 /**
@@ -56,33 +55,16 @@ mongoose.connection.on("error", err => {
  */
 app.set("host", process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0");
 app.set("port", process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
 app.use(cors());
 app.use(expressStatusMonitor());
 app.use(compression());
-app.use(
-  sass({
-    src: path.join(__dirname, "public"),
-    dest: path.join(__dirname, "public")
-  })
-);
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 
-app.use(
-  express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
-);
-
 /**
- * Primary app routes.
- */
-app.get("/", homeController.index);
-
-/**
- * API examples routes.
+ * API routes.
  */
 app.post("/user/:type", apiController.postUser);
 app.put("/user/:type", apiController.updateUser);

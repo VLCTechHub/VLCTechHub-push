@@ -11,7 +11,6 @@ const notificationTitles = {
 const expo = new Expo();
 
 const sendNotifications = (tokens, { title, message }) => {
-  console.log(tokens, title, message);
   let messages = [];
   for (let token of tokens) {
     if (!Expo.isExpoPushToken(token)) {
