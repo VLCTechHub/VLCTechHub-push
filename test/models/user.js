@@ -1,9 +1,7 @@
 const { expect } = require("chai")
-const User = require("../models/User")
+const User = require("../../models/User")
 const sinon = require("sinon")
 require("sinon-mongoose")
-
-require("../models/User")
 
 const user1 = {
     token: "123",
@@ -17,13 +15,13 @@ const user2 = {
 }
 const user3 = {
     token: "789",
-    type: "jobs",
-    latestItemId: "ghi",
+    type: "reminders",
+    eventId: "ghi",
 }
 const user4 = {
     token: "012",
-    type: "jobs",
-    latestItemId: "jkl",
+    type: "reminders",
+    eventId: "ghi",
 }
 
 describe("User Model", () => {
@@ -46,6 +44,17 @@ describe("User Model", () => {
         User.getUsersByType("events", "def").then(res => {
             expect(res.length).to.eq(1)
             expect(res[0].latestItemId).to.eq("abc")
+            done()
+        })
+    })
+    it("should return users for a specific event ID", done => {
+        UserMock.expects("find")
+            .withArgs({ eventId: "ghi" })
+            .chain("exec")
+            .resolves([user3, user4])
+        User.getUsersByEventId("ghi").then(res => {
+            expect(res.length).to.eq(2)
+            expect(res[0].eventId).to.eq("ghi")
             done()
         })
     })

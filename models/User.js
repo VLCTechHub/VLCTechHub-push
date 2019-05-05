@@ -31,6 +31,10 @@ userSchema.static("setLatestItemIdForUser", function(tokens, type, itemId) {
     return this.update(criteria, { $set: { latestItemId: itemId } }, { multi: true })
 })
 
+userSchema.static("getUsersByEventId", function(eventId) {
+    return this.find({ eventId })
+})
+
 const User = mongoose.model("User", userSchema)
 
 module.exports = User

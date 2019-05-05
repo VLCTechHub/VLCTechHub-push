@@ -66,7 +66,7 @@ exports.removeUser = (req, res) => {
 
 exports.updateUser = (req, res) => {
     const { response, type, token } = validateInput(req, res)
-    remoteApi.getLatestItemForType(type).then(latestItem => {
+    remoteApi.fetchLatestItemForType(type).then(latestItem => {
         User.setLatestItemIdForUser([token], type, latestItem.id).then(status => {
             if (status.ok) {
                 response.status = "success"
@@ -79,18 +79,18 @@ exports.updateUser = (req, res) => {
 
 exports.postUser = (req, res) => {
     const { response, type, token, eventId } = validateInput(req, res)
+    const newUserCb = err => newUserCallback(err, res, response)
+    if (type === "reminders") {
+        const newUser = new User({ type, token, eventId })
+        newUser.save(newUserCb)
+        return
+    }
     User.getUserByTypeAndToken(type, token).then(user => {
         if (user) {
             response.message = "user exists"
             return res.json(response)
         }
-        const newUserCb = err => newUserCallback(err, res, response)
-        if (type === "reminders") {
-            const newUser = new User({ type, token, eventId })
-            newUser.save(newUserCb)
-            return
-        }
-        remoteApi.getLatestItemForType(type).then(latestItem => {
+        remoteApi.fetchLatestItemForType(type).then(latestItem => {
             const newUser = new User({ type, token, latestItemId: latestItem.id })
             newUser.save(newUserCb)
         })
