@@ -25,7 +25,13 @@ const user4 = {
 }
 
 describe("User Model", () => {
-    const UserMock = sinon.mock(User)
+    let UserMock
+    before(() => {
+        UserMock = sinon.mock(User)
+    })
+    after(() => {
+        UserMock.restore()
+    })
     it("should return a user by type and token", done => {
         UserMock.expects("findOne")
             .withArgs({ type: "events", token: "123" })

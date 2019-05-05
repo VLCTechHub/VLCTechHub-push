@@ -1,26 +1,8 @@
 #!/usr/bin/env node
 
-const mongoose = require("mongoose")
-const dotenv = require("dotenv")
+const bootstrap = require("./bootstrap")
 const remindersController = require("../controllers/reminders")
 
-/**
- * Load environment variables from .env file, where API keys and passwords are configured.
- */
-dotenv.load({ path: ".env" })
-
-/**
- * Connect to MongoDB.
- */
-mongoose.Promise = global.Promise
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/vlctechhub", {
-    user: process.env.MONGODB_USER,
-    pass: process.env.MONGODB_PASS,
+bootstrap.connectToMongo(() => {
+    remindersController.sendRemindersForEventsOnDate(new Date())
 })
-mongoose.connection.on("error", err => {
-    console.error(err)
-    console.log("%s MongoDB connection error. Please make sure MongoDB is running.", chalk.red("✗"))
-    process.exit()
-})
-
-remindersController.sendRemindersForEventsOnDate(new Date())
