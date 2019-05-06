@@ -3,7 +3,7 @@ const Expo = require("expo-server-sdk")
 // Create a new Expo SDK client
 const expo = new Expo()
 
-const sendNotifications = (tokens, { title, message }) => {
+const sendNotifications = (tokens, { title, message, data }) => {
     let messages = []
     for (let token of tokens) {
         if (!Expo.isExpoPushToken(token)) {
@@ -15,6 +15,7 @@ const sendNotifications = (tokens, { title, message }) => {
             sound: "default",
             title: title,
             body: message,
+            data,
         })
     }
 

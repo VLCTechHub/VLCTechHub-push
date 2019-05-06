@@ -22,6 +22,7 @@ const sendPushNotificationsToUsers = (type, latestItem, users) => {
     pushNotificationsHelper.sendNotifications(tokens, {
         title: notificationTitles[type],
         message: type === "events" ? latestItem.title : `${latestItem.title} en ${latestItem.company.name}`,
+        data: { type, id: latestItem.id },
     })
     User.setLatestItemIdForUser(tokens, type, latestItem.id).then(res => res)
 }
