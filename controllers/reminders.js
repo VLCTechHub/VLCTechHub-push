@@ -18,7 +18,7 @@ const sendRemindersForEvent = event => {
         pushNotificationsHelper.sendNotifications(tokens, {
             title: "Recordatorio para el evento",
             message: event.title,
-            data: { type, id: latestItem.id },
+            data: { type: "reminders", id: event.id },
         })
     })
 }
